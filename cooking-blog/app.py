@@ -30,7 +30,7 @@ app.secret_key = 'super_secret_key'
 GOOGLE_CLIENT_ID = json.loads(open('client_secret.json', 'r').read())[
     'web']['client_id']
 
-#Connect to Database and create database session
+# Connect to Database and create database session
 engine = create_engine(
     'sqlite:///rb.db', connect_args={'check_same_thread': False})
 Base.metadata.bind = engine
@@ -44,7 +44,7 @@ currentUser = None
 @auth.verify_token
 def verify_token(token):
     access_token = session.get('access_token')
-    return access_token != None
+    return access_token is not None
 
 
 def cuisine_check(func):
@@ -98,11 +98,11 @@ def owner_check(func):
     def wrap(*args, **kwargs):
         recipe = kwargs.get('recipe')
         email = session.get('email')
-        if recipe == None:
+        if recipe is None:
             response = make_response(json.dumps('Recipe not found.'), 404)
             response.headers['Content-Type'] = 'application/json'
             return response
-        elif email == None:
+        elif email is None:
             response = make_response(json.dumps(
                 'Modification not allowed. You are not signed in.'), 401)
             response.headers['Content-Type'] = 'application/json'
@@ -116,7 +116,8 @@ def owner_check(func):
 
 
 @app.route('/', endpoint='index', methods=['GET', 'POST'])
-@app.route('/cuisine/<cuisine>/', endpoint='show-cuisine', methods=['GET', 'POST'])
+@app.route('/cuisine/<cuisine>/', endpoint='show-cuisine',
+           methods=['GET', 'POST'])
 @cuisine_check
 @add_cuisines
 def index(cuisine, cuisine_entries):
@@ -179,7 +180,7 @@ def showRecipe(cuisine, recipe_id):
 
     canModify = False
     email = session.get('email')
-    if email != None and recipe.user.email == email:
+    if email is not None and recipe.user.email == email:
         canModify = True
 
     user = session.get('username')
@@ -192,7 +193,8 @@ def showRecipe(cuisine, recipe_id):
     )
 
 
-@app.route('/cuisine/<cuisine>/recipe/<int:recipe_id>/delete/', methods=['POST'])
+@app.route('/cuisine/<cuisine>/recipe/<int:recipe_id>/delete/',
+           methods=['POST'])
 @auth.login_required
 @cuisine_check
 @add_recipe
@@ -207,7 +209,8 @@ def deleteRecipe(cuisine, recipe_id, recipe):
     return redirect(url_for('index'))
 
 
-@app.route('/cuisine/<cuisine>/recipe/<int:recipe_id>/edit/', methods=['GET', 'POST'])
+@app.route('/cuisine/<cuisine>/recipe/<int:recipe_id>/edit/',
+           methods=['GET', 'POST'])
 @auth.login_required
 @cuisine_check
 @add_recipe
@@ -232,6 +235,7 @@ def editRecipe(cuisine, recipe_id, recipe):
         session_db.commit()
         flash('Recipe has been updated')
         return redirect(url_for('index'))
+
 
 @app.route('/recipe/new/', methods=['GET', 'POST'])
 @auth.login_required
@@ -319,9 +323,9 @@ def gconnect():
         oauth_flow = flow_from_clientsecrets('client_secret.json', scope='')
         oauth_flow.redirect_uri = 'postmessage'
         credentials = oauth_flow.step2_exchange(code)
-    except FlowExchangeError as e:
+    except FlowExchangeError:
         response = make_response(
-            json.dumps('Failed to upgrade the authorization code, %s' % str(e)), 401)
+            json.dumps('Failed to upgrade the authorization code'), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
 
@@ -404,7 +408,6 @@ def signOut():
     h = httplib2.Http()
     result = h.request(url, 'GET')[0]
 
-    # if result['status'] == '200':
     del session['logged_in']
     del session['access_token']
     del session['google_id']
@@ -414,9 +417,6 @@ def signOut():
     del session['provider']
     flash("You have been logged out")
     return render_template('signout.html', GOOGLE_CLIENT_ID=GOOGLE_CLIENT_ID)
-    # else:
-    #     flash("FAILED to revoke token for given user")
-    #     return redirect(url_for('index'))
 
 
 if __name__ == '__main__':

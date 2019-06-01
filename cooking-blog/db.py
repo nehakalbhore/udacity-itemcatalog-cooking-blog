@@ -16,7 +16,7 @@ class Users(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(250))
     email = Column(String, index=True)
-    
+
     @property
     def serialize(self):
         return {
