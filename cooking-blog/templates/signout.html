@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <link href='//fonts.googleapis.com/css?family=Roboto:400,300,700' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+  <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
+  <script src="//apis.google.com/js/platform.js?onload=init" async defer></script>
+
+  <meta name="google-signin-client_id" content="{{ GOOGLE_CLIENT_ID }}">
+
+</head>
+
+<body>
+  <div class="container">
+
+    <script>
+      function init() {
+        if (window.Promise && window.fetch) {
+          console.log('Browser check passed. No polyfills needed.')
+          loadGoogleOAuth();
+        } else {
+          console.log('Browser check failed. Loading required polyfills');
+          var js = document.createElement('script');
+          js.src = 'https://polyfill.io/v3/polyfill.min.js?features=Promise,fetch';
+
+          js.onload = function () {
+            loadGoogleOAuth();
+          };
+
+          js.onerror = function () {
+            console.error('Required polyfills FAILED to load.');
+            console.error('Google Sign in FAILED to load.');
+          };
+
+          document.head.appendChild(js);
+        }
+      }
+
+      function loadGoogleOAuth() {
+        gapi.load('auth2', function () {
+
+          var gauth2 = gapi.auth2.init();
+          setTimeout(function () {
+            gauth2.signOut().then(function () {
+              console.log('User signed out.');
+              window.location.href = '/';
+            });
+
+          }, 2000);
+        });
+
+      }
+    </script>
+  </div>
+</body>
+
+</html>

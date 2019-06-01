@@ -1,0 +1,56 @@
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item active" aria-current="page">
+      <a class="breadcrumb-item active" href="{{ url_for('show-cuisine', cuisine='all') }}">cuisines</a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">
+      <a class="breadcrumb-item active"
+        href="{{ url_for('show-cuisine', cuisine=recipe.cuisine.name) }}">{{ recipe.cuisine.name }}</a>
+    </li>
+  </ol>
+</nav>
+
+<div class="card">
+  <h5 class="card-header">{{recipe.name}}</h5>
+  <div class="card-body">
+   <pre>{{recipe.user.name}}, {{recipe.created}}</pre>
+    <h5 class="card-title">Ingredients</h5>
+    <ul>
+      {% for line in recipe.ingredients.split(".") %}
+      <li>{{line}}</li>
+      {% endfor %}
+    </ul>
+    <h5 class="card-title">Recipe</h5>
+    <p class="card-text">{{recipe.body}}</p>
+    {% if modification_allowed %}
+    <button type="button" class="btn btn-secondary"
+      onclick="location.href='{{ url_for('editRecipe', cuisine=recipe.cuisine.name, recipe_id=recipe.id) }}'">Edit</button>
+    <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#deleteConfirm">
+      Delete
+    </button>
+    {% endif %}
+  </div>
+</div>
+
+<div class="modal fade" id="deleteConfirm" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteConfirmLabel">Delete Recipe ?</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to delete {{recipe.name}} recipe ?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+        <form action="{{ url_for('deleteRecipe', cuisine=recipe.cuisine.name, recipe_id=recipe.id) }}" method="post">
+          <button type="submit" class="btn btn-primary">Yes</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

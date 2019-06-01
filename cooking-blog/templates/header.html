@@ -1,0 +1,22 @@
+<head>
+    <title>Cooking Blog</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</head>
+
+<nav class="navbar navbar-dark bg-dark">
+    <span class="navbar-brand mb-0 h1">
+        <a class="navbar-btn" href="{{url_for('index')}}">
+            <h3>Cooking Blog</h3>
+        </a>
+    </span>
+    <div class="navbar-right">
+        {% if user %}
+        <a class="navbar-btn" href="{{url_for('newRecipe')}}"> Post New Recipe </a>
+        <a class="navbar-btn" href="{{url_for('signOut')}}"> Sign Out ({{user}})</a>
+        {% else %}
+        <a class="navbar-btn" href="{{url_for('showLogin')}}">Sign In</a>
+        {% endif %}
+    </div>
+</nav>

@@ -1,0 +1,44 @@
+<div class="alert alert-success alert-dismissible" role="alert">
+  <button type="button" class="close" data-dismiss="alert">&times;</button>
+  {% with flash_messages = get_flashed_messages() %}
+  {% if flash_messages %}
+  <ul>
+    {% for flash_message in flash_messages %}
+    <li> <strong> {{ flash_message }} </strong> </li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+  {% endwith %}
+</div>
+
+<div class="btn-group" role="group" aria-label="Basic example">
+  {% if this_cuisine == 'all' %}
+  <button type="button" class="btn btn-primary">All</button>
+  {% else %}
+  <button type="button" class="btn btn-secondary"
+    onclick="location.href='{{ url_for('show-cuisine', cuisine='all') }}'">All</button>
+  {% endif %}
+  {% for cuisine in cuisine_entries %}
+  {% if this_cuisine == cuisine.name %}
+  <button type="button" class="btn btn-primary">{{ cuisine.name }}</button>
+  {% else %}
+  <button type="button" class="btn btn-secondary"
+    onclick="location.href='{{ url_for('show-cuisine', cuisine=cuisine.name) }}'">{{ cuisine.name }}</button>
+  {% endif %}
+  {% endfor %}
+</div>
+
+
+<div class="row">
+  {% for recipe in recipes %}
+  <div class="col-sm-6">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">{{recipe.name}}</h5>
+        <a href="{{ url_for('showRecipe', cuisine=recipe.cuisine.name, recipe_id=recipe.id) }}"
+          class="btn btn-primary">Read</a>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>

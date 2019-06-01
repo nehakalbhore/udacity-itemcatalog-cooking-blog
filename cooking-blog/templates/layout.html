@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+{% include "header.html" %}
+
+<body>
+    <div id="content">
+        {% if index %}
+        {% include "index.html" %}
+        {% endif %}
+
+        {% if show_recipe %}
+        {% include "recipe.html" %}
+        {% endif %}
+
+        {% if edit_recipe %}
+        {% include "edit-recipe.html" %}
+        {% endif %}
+
+        {% if new_recipe %}
+        {% include "new-recipe.html" %}
+        {% endif %}
+    </div>
+</body>
+
+</html>

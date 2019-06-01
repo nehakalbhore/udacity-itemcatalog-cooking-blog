@@ -1,0 +1,29 @@
+<body>
+  <div class="container">
+    <form method="POST" width="80%">
+      <div class="form-group">
+        <label for="name">Recipe Name</label>
+        <input class="form-control" name="name" value="" />
+      </div>
+      <div class="form-group">
+        <label for="cuisine">Select Cuisine</label>
+        <select class="form-control" name="cuisine">
+          {% for cuisine in cuisines %}
+          <option>{{cuisine.name}}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="ingredients">Ingredients</label>
+        <textarea class="form-control" rows="4" name="ingredients"></textarea>
+      </div>
+      <div class="form-group">
+        <label for="recipe">Recipe</label>
+        <textarea class="form-control" rows="8" name="recipe"></textarea>
+      </div>
+      <div class="form-group">
+        <button type="submit" class="btn btn-primary">Post</button>
+        </hdiv>
+    </form>
+  </div>
+</body>

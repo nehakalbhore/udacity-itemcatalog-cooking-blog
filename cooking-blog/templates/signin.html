@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <link href='//fonts.googleapis.com/css?family=Roboto:400,300,700' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+  <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
+  <script src="//apis.google.com/js/platform.js?onload=init" async defer></script>
+  <meta name="google-signin-client_id" content="{{ GOOGLE_CLIENT_ID }}">
+</head>
+
+<body>
+  <div class="container">
+    <h1>Sign with your Google Account</h1>
+    <div id="gbutton"></div>
+    <script>
+      function init() {
+        if (window.Promise && window.fetch) {
+          console.log('Browser check passed. No polyfills needed.')
+          loadGoogleOAuth();
+        } else {
+          console.log('Browser check failed. Loading required polyfills');
+          var js = document.createElement('script');
+          js.src = 'https://polyfill.io/v3/polyfill.min.js?features=Promise,fetch';
+
+          js.onload = function () {
+            loadGoogleOAuth();
+          };
+
+          js.onerror = function () {
+            console.error('Required polyfills FAILED to load.');
+            console.error('Google Sign in FAILED to load.');
+          };
+
+          document.head.appendChild(js);
+        }
+      }
+
+      function loadGoogleOAuth() {
+        gapi.load('auth2', function () {
+          gapi.signin2.render('gbutton', {
+            scope: 'email',
+            onsuccess: offlineAccess
+          });
+        });
+      }
+
+      function offlineAccess(googleUser) {
+        var profile = googleUser.getBasicProfile();
+        console.log("ID: " + profile.getId());
+        console.log('Full Name: ' + profile.getName());
+        console.log('Given Name: ' + profile.getGivenName());
+        console.log('Family Name: ' + profile.getFamilyName());
+        console.log("Image URL: " + profile.getImageUrl());
+        console.log("Email: " + profile.getEmail());
+
+        //Request offline access
+        gapi.auth2.getAuthInstance().grantOfflineAccess({
+          "prompt": "consent"
+        }).then(function (resp) {
+          var auth_code = resp.code;
+          console.log(resp);
+          fetch("{{url_for('gconnect')}}?state={{state}}", {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/octet-stream; charset=utf-8'
+            },
+            body: auth_code
+          }).then(function (response) {
+            return response.text();
+          }).then(function (html) {
+            console.log(html);
+            document.body.innerHTML = html;
+            setTimeout(function () {
+              window.location.href = " {{url_for('index')}} ";
+            }, 3000);
+          }).catch(function (err) {
+            console.error(err);
+          });
+        });
+      }
+    </script>
+  </div>
+</body>
+
+</html>
