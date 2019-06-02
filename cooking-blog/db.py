@@ -47,9 +47,9 @@ class Recipe(Base):
     body = Column(String(4096 * 4), nullable=False)
     created = Column(Date, nullable=False)
     cuisine_id = Column(Integer, ForeignKey('cuisine.id'))
-    cuisine = relationship(Cuisine)
+    cuisine = relationship(Cuisine, cascade="all")
     user_id = Column(Integer, ForeignKey('users.id'))
-    user = relationship(Users)
+    user = relationship(Users, cascade="all")
 
     @property
     def serialize(self):
